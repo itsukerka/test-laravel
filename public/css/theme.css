@@ -1,0 +1,57 @@
+h1, h2, h3, h4, h5, h6 {font-family: 'Noto Serif Display';letter-spacing: .4px;}
+header {position: fixed;width: 100%;top: 0;left: 0;background: #fee9e8;z-index: 11;}
+
+header > .wrapper {display: flex;padding: 0 15px;align-items: center;}
+
+.ui-logo svg {width: 115px;height: 70px;}
+
+header > .wrapper > .col-right {margin-left: auto;}
+
+.ui-header--el__item {font-weight: 600;}
+
+.ui-main-layout {padding-top: 65px;display: flex;position: relative;}
+
+.ui-main-layout > .sidebar-left, .ui-main-layout > .sidebar-right {position: fixed;top: 0;width: 250px;margin-top: 70px;}
+
+.ui-main-layout > .main-content {width: calc(100% - 500px);max-width: 1020px;
+    margin: 0 auto;}
+
+.ui-new_article--button {justify-content: center;display: flex;width: 100%;padding: 14px;font-weight: 500;font-size: 15px;}
+
+.ui-post--card .title {font-size: 1.6rem;font-family: 'Noto Serif Display';font-weight: 500;-webkit-font-smoothing: auto;line-height: 1.3;;display: block;margin-bottom: 15px;margin-top: 4px;}
+
+.ui-post--card  .header {font-size: 15px;display: flex;margin: -5px;margin-bottom: 0;align-items: center;}
+
+.ui-post--card .header > .item {margin: 5px;}
+
+.ui-post--card .header .item.date {color: #aeaeae;font-size: 14px;-webkit-font-smoothing: auto;}
+
+.ui-post--card .header .item.author {font-weight: 500;}
+
+.ui-post--card .footer {display: flex;margin: -5px;margin-bottom: -2px;margin-top: 0px;}
+
+.ui-post--card .footer > .item {margin: 5px;display: flex;color: gray;font-size: 15px;font-weight: 500;letter-spacing: -.3px;}
+
+.ui-post--card .footer > .item > .label {margin-left: 5px;}
+
+.ui-post--card .header > .item.status {margin-left: auto;}
+
+.ui-post-status {background: #fef6e8;border-radius: 4px;display: block;padding: 2px 9px;font-weight: 600;font-size: 13px;}
+
+.icon--user {
+    background: url('/assets/icons/user.svg') no-repeat;
+    display: block;width: 28px;height: 28px;background-size: contain;
+}
+
+.icon--register {
+    background: url('/assets/icons/log-in.svg') no-repeat;
+    display: block;width: 28px;height: 28px;background-size: contain;
+}
+
+.ui-header-nav > .item {display: flex;font-weight: 700;height: 100%;align-items: center;padding: 0 10px;transition: 0.2s;}
+
+.ui-header-nav > .item .icon+.label {margin-left: 7px;}
+
+.ui-header-nav > .item:hover {background: #00000009;}
+.ui-button {background: #0091ff;width: max-content;color: white;border-radius: 5px;padding: 13px 22px;font-size: 15px;line-height: 1.2;font-weight: 500;cursor: pointer;}
+.ui-button.ui-button--1 {background: transparent;color: #0091ff;}
