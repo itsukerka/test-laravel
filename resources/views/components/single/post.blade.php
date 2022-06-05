@@ -1,7 +1,5 @@
 <?php
-use App\Models\Post\Post;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Models\Post\Post;use App\Models\User\User;use Carbon\Carbon;
 
 /** @var Post $post */
 

@@ -1,9 +1,7 @@
 <?php
-    use App\Models\User;
-    use Carbon\Carbon;
-    use App\Models\Post\Post;
+use App\Models\User\User;use Carbon\Carbon;
 
-    /** @var DateTime $created_at */
+/** @var DateTime $created_at */
     /** @var User $author_id */
     $date = Carbon::parse($created_at);
     $updated = Carbon::parse($updated_at);
