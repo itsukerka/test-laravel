@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -15,5 +16,16 @@ class UserController extends Controller
         } else {
             return view('components.error.404');
         }
+    }
+
+    public function edit($user_id)
+    {
+        return view('profile.edit', ['user_id' => $user_id]);
+    }
+    public function update($user_id)
+    {
+        $_POST['data'] = str_replace('\\', '', $_POST['data']);
+        $data = json_decode($_POST['data'], true);
+
     }
 }

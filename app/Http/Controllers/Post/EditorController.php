@@ -25,6 +25,8 @@ class EditorController extends Controller
             $Post->update_meta('post_content', json_encode($data, JSON_UNESCAPED_UNICODE));
             if(isset($_POST['status']) AND Auth::user()->role == 'admin'){
                 $Post->update_post('status', strval($_POST['status']));
+            } else {
+                $Post->update_post('status', 'draft');
             }
         }
 

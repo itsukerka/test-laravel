@@ -27,15 +27,24 @@ class Post extends Model
     // Получаем запись с контентом по его ID
     //
 
-    public static function getPost($post_id): Post
+    public static function getPost($post_id)
     {
-        $post_data = [];
+        $post_data = false;
         $query = Post::select('posts.*')
             ->where('post_id', '=', $post_id)
             ->orderBy('posts.created_at', 'desc')
             ->paginate(1)->first();
         if($query){
             $post_data = $query;
+
+            // Если статья принадлежит юзеру или юзер админ – возвращаем статью
+            if($post_data->status != 'publish' AND !Auth::id()) {
+                return false;
+            }
+            if ($post_data->status != 'publish' AND (Auth::id() != $post_data->author_id OR Auth::user()->role != 'admin')) {
+                return false;
+            }
+
             $get_content = (new Post)->get_meta(['post_id' => $post_id, 'meta_key' => 'post_content']);
             $post_content = json_decode($get_content, true);
             if(!is_array($post_content)){
@@ -124,8 +133,12 @@ class Post extends Model
     }
     public function canEdit(): bool
     {
-        if(Auth::user()->id == $this->author_id OR Auth::user()->role == 'admin'){
-            return true;
+        if(Auth::id()) {
+            if (Auth::id() == $this->author_id or Auth::user()->role == 'admin') {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
