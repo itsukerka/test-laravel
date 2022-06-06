@@ -1268,6 +1268,10 @@ select {
 .disabled\:opacity-25:disabled {
     opacity: 0.25;
 }
+
+.ui-button {background: #0091ff;width: max-content;color: white;border-radius: 5px;padding: 13px 22px;font-size: 15px;line-height: 1.2;font-weight: 500;cursor: pointer;}
+.ui-button.ui-button--1 {background: transparent;color: #0091ff;}
+
 @media (prefers-color-scheme: dark) {
 
     .dark\:border-gray-700 {

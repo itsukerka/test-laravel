@@ -53,5 +53,4 @@ header > .wrapper > .col-right {margin-left: auto;}
 .ui-header-nav > .item .icon+.label {margin-left: 7px;}
 
 .ui-header-nav > .item:hover {background: #00000009;}
-.ui-button {background: #0091ff;width: max-content;color: white;border-radius: 5px;padding: 13px 22px;font-size: 15px;line-height: 1.2;font-weight: 500;cursor: pointer;}
-.ui-button.ui-button--1 {background: transparent;color: #0091ff;}
+

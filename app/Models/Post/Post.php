@@ -76,6 +76,23 @@ class Post extends Model
         return $result;
     }
 
+    public function meta($key, $post_id = false): string
+    {
+        if(!$post_id){
+            $post_id = $this->post_id;
+        }
+        $query = PostMeta::select('post_metas.*')
+            ->where('post_id', '=', $post_id)
+            ->where('meta_key', '=', $key)
+            ->paginate(1)->first();
+        $result = '';
+        if($query){
+            $result = $query->meta_value;
+        }
+
+        return $result;
+    }
+
     public function update_meta($key, $value){
         DB::table('post_metas')
             ->updateOrInsert(

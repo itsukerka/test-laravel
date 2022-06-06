@@ -2,7 +2,7 @@ input, optgroup, select, textarea {
     font-family: inherit;
     font-size: 100%;
     margin: 0;
-    background: #F0F2F8;
+
     border: none;
     color: #3D3D3D;
     padding: 5px 16px;
@@ -13,7 +13,7 @@ input, optgroup, select, textarea {
 }
 
 .ui_form__fieldsets {
-    padding: 5px 0px;
+    padding: 10px 0px;
 }
 
 .ui_form__fieldsets> .title {
@@ -194,10 +194,10 @@ span.select2-container--open .select2-dropdown {
 
 /* INPUT SELECT TEXTAREA */
 
-.ui_form__fieldset > .field > input {
-    width: 100%;
+.ui_form__fieldset > .field > input, .ui_form__fieldset > .field > select, .ui_form__fieldset > .field > textarea {
+    border: 1px solid #e6e7eb;width: 100%;
     padding-top: 21px;
-}
+    font-size: 15px;border-radius: 8px;}
 
 .ui_form__fieldset > .field {
     position: relative;
@@ -207,12 +207,12 @@ span.select2-container--open .select2-dropdown {
     position: absolute;
     z-index: 1;
     left: 16px;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 20px;
-    top: 19px;
+    top: 17px;
     color: #90A4AE;
     transition: 0.3s;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .ui_form__fieldset.invalid > .field > label {
@@ -222,7 +222,7 @@ span.select2-container--open .select2-dropdown {
 .ui_form__fieldset > .field > .not-empty + label, .ui_form__fieldset > .field > :focus + label {
     font-size: 12px;
     top: 7px;
-}
+    left: 13px;}
 
 .ui_form__fieldset.center, .ui_form__fieldset.center input {
     text-align: center;
@@ -235,7 +235,7 @@ span.select2-container--open .select2-dropdown {
 .ui_form__fieldset {
     text-align: left;
     position: relative;
-    margin: 3px 0;
+    margin: 6px 0;
 }
 
 .ui_form__fieldset > .status {
