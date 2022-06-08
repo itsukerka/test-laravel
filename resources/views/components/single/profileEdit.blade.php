@@ -32,6 +32,15 @@ $User = User::findOrFail($user_id);
                                 <div class="information"></div>
                             </div>
 
+                            <div class="ui_form__fieldset" data-error="Invalid Email">
+                                <div class="field">
+                                    <input class="{{ $User->notEmptyClass($User->email) }}" name="email" id="email" type="text" disabled value="{{ $User->email }}" data-mask="email">
+                                    <label for="email">E-mail</label>
+                                </div>
+                                <div class="status"><span></span></div>
+                                <div class="information"></div>
+                            </div>
+
                             <div class="ui_form__fieldset" data-error="Invalid Date">
                                 <div class="field">
                                     <input class="not-empty" name="birthday" id="birthday" type="date" value="{{ $User->get_meta('birthday')  }}" required="">

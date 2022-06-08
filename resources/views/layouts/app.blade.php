@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>My First Laravel Project</title>
+    <title>{{ $title }} - {{ config('app.name', 'Laravel') }}</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
