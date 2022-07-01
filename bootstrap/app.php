@@ -41,6 +41,8 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+$app->register(Laravolt\Avatar\LumenServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Return The Application

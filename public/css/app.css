@@ -963,6 +963,9 @@ select {
 .pb-3 {
     padding-bottom: 0.75rem;
 }
+.pb-4 {
+    padding-bottom: 1rem;
+}
 .pt-4 {
     padding-top: 1rem;
 }
@@ -986,6 +989,10 @@ select {
 .text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
+}
+.text-xxl {
+    font-size: 1.55rem;
+    line-height: 1.95rem;
 }
 .text-xs {
     font-size: 0.75rem;

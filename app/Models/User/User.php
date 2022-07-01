@@ -5,8 +5,10 @@ namespace App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
+use Laravolt\Avatar\Avatar;
 
 /**
  * @property mixed $id
@@ -82,6 +84,18 @@ class User extends Authenticatable
     public function notEmptyClass($string = ''){
         if($string != ''){
             echo 'not-empty';
+        }
+    }
+
+    public function get_avatar(){
+        $config = include config_path().'/laravolt/avatar.php';
+        $image_url = $this->get_meta('avatar');
+        $avatar = new Avatar($config);
+
+        if($image_url == '') {
+            echo  $avatar->create($this->name)->toSvg();
+        } else {
+            echo '<img src=".$image_url.">';
         }
     }
 }

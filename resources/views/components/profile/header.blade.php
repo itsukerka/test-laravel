@@ -5,12 +5,26 @@ $get_path = Request::route()->getName();
 ?>
 @if(User::find($user_id))
 <?php $User = User::findOrFail($user_id); ?>
-<div class="py-12">
+<div class="header--author py-12">
     <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <h1 class="p-6 bg-white border-b border-gray-200 text-xl font-semibold">
-                {{ $User->name }}
-            </h1>
+
+            <div class="border-b border-gray-200">
+                <div class="profile--avatar">
+                    {{ $User->get_avatar() }}
+                </div>
+                <h1 class="font-semibold p-6 pb-1 text-xxl">
+                    {{ $User->name }}
+                </h1>
+                <div class="p-6 pt-1">
+                    <p>
+                        {{ $User->get_meta('description') }}
+                    </p>
+                    @if(Auth::user()->id == $user_id OR Auth::user()->role == 'admin')
+                        <p><a href="{{ url('profile/'.$user_id.'/edit') }}">Изменить описание</a></p>
+                    @endif
+                </div>
+            </div>
             <div class="hidden ml-2 pl-3 pr-4 pt-2 sm:flex sm:items-center sm:ml-2">
                 @if(request()->is('dashboard'))
                 <x-nav-link href="{{url('profile/'.$user_id)}}" :active="request()->is('dashboard')" class="px-2 p-5">

@@ -32,6 +32,15 @@ $User = User::findOrFail($user_id);
                                 <div class="information"></div>
                             </div>
 
+                            <div class="ui_form__fieldset">
+                                <div class="textarea field">
+                                    <textarea name="description" class="w-100 {{ $User->notEmptyClass($User->get_meta('description')) }}" id="address">{{ $User->get_meta('description') }}</textarea>
+                                    <label for="description">Description</label>
+                                </div>
+                                <div class="status"><span></span></div>
+                                <div class="information"></div>
+                            </div>
+
                             <div class="ui_form__fieldset" data-error="Invalid Email">
                                 <div class="field">
                                     <input class="{{ $User->notEmptyClass($User->email) }}" name="email" id="email" type="text" disabled value="{{ $User->email }}" data-mask="email">
