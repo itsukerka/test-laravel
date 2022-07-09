@@ -19,14 +19,14 @@ class UserHasAccess
     public function handle(Request $request, Closure $next)
     {
         //Проверяем, имеет ли доступ юзер к этой странице
-        $User = User::findOrFail($request->user_id);
+        $User = User::findOrFail($request->id);
         if(!$User){
             return redirect('/');
         }
         if (!Auth::id()){
             return redirect('login');
         } else {
-            if (Auth::id() !== intval($request->user_id)) {
+            if (Auth::id() !== intval($request->id)) {
                 if (Auth::user()->role !== 'admin') {
                     return redirect('/');
                 }

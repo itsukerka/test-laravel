@@ -41,7 +41,7 @@ if($post->canEdit()){
                         @endif
                             @if($post->canEdit())
                                 <div class="item status">
-                                    <a href="{{url('editor/'.$post->post_id)}}" class="ui-post-status">
+                                    <a href="{{url($post->post_id.'-'.$post->slug.'/edit')}}" class="ui-post-status">
                                         <span class="label">Edit</span>
                                     </a>
                                 </div>

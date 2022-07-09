@@ -1,6 +1,3 @@
-<?php
-
-?>
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -16,7 +13,7 @@
 <body class="antialiased">
 <div id="_page">
     {{ view('components.header.header-1') }}
-    {{ view('components.single.home') }}
+    @include('components.single.home')
     {{ view('components.footer.footer-1') }}
 </div>
 

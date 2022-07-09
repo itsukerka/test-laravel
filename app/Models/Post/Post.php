@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 class Post extends Model
 {
     use HasFactory;
+    protected $primaryKey = "post_id";
 
     //
     // Получаем запись с контентом по его ID
@@ -30,10 +31,7 @@ class Post extends Model
     public static function getPost($post_id)
     {
         $post_data = false;
-        $query = Post::select('posts.*')
-            ->where('post_id', '=', $post_id)
-            ->orderBy('posts.created_at', 'desc')
-            ->paginate(1)->first();
+        $query = Post::find($post_id);
         if($query){
             $post_data = $query;
 
@@ -118,26 +116,17 @@ class Post extends Model
             $status = $args['status'];
         }
 
-        if(isset($args['post_author'])){
-            $post_author = $args['post_author'];
-        }
 
         if(isset($args['posts_per_page'])){
             $posts_per_page = $args['posts_per_page'];
         }
 
-        if(!isset($post_author)) {
-            return Post::select('posts.*')
-                ->where('status', '=', $status)
-                ->orderBy('posts.created_at', 'desc')
-                ->paginate($posts_per_page);
-        } else {
-            return Post::select('posts.*')
-                ->where('status', '=', $status)
-                ->where('author_id', '=', $post_author)
-                ->orderBy('posts.created_at', 'desc')
-                ->paginate($posts_per_page);
-        }
+        return Post::where('status', $status)
+            ->when(isset($args['post_author']), function ($query) use ($args) {
+                $query->where('author_id', $args['post_author']);
+            })
+            ->latest()
+            ->paginate($posts_per_page);
     }
 
 
@@ -148,10 +137,11 @@ class Post extends Model
                 ['author_id' => Auth::user()->id, 'status' => 'draft', 'created_at' =>  \Carbon\Carbon::now()],
             );
     }
+
     public function canEdit(): bool
     {
         if(Auth::id()) {
-            if (Auth::id() == $this->author_id or Auth::user()->role == 'admin') {
+            if (Auth::id() == $this->author_id || Auth::user()->role == 'admin') {
                 return true;
             } else {
                 return false;

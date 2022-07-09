@@ -1,10 +1,17 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminCommentsController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AdminPostsController;
+use App\Http\Controllers\Admin\AdminRolesController;
+use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\Post\PostCommentsController;
 use App\Http\Controllers\Post\PostController;
-use App\Http\Controllers\Post\EditorController;
-use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Profile\ProfileCommentsController;
+use App\Http\Controllers\Profile\ProfileController;
 use App\Http\Controllers\UserController;
-use \App\Http\Controllers\AjaxController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,67 +26,110 @@ use Illuminate\Support\Facades\Route;
 */
 
 //
-// GET
+// Index page
 //
 
-Route::get('/', function () {
-    return view('index');
+Route::get('/', [IndexController::class, 'index']);
+
+//
+// User's Profile
+//
+
+Route::group(['prefix' => 'profile', 'middleware' => ['auth']], function () {
+    Route::get('/', [ProfileController::class, 'index'])->name('ProfileIndex');
+    Route::post('/', [ProfileController::class, 'store']);
+    Route::get('{id}', [ProfileController::class, 'show']);
+    Route::get('{id}/edit', [ProfileController::class, 'edit'])->middleware(['user.has.access']);
+    Route::post('{id}', [ProfileController::class, 'update'])->middleware(['user.has.access']);
+
+    //User's Posts
+    Route::get('draft', [ProfileController::class, 'draft']);
+
+    //Comments Browser
+    Route::group(['prefix' => 'comments'], function () {
+        Route::get('/', [ProfileCommentsController::class, 'index']);
+        Route::get('create', [ProfileCommentsController::class, 'create']);
+        Route::post('/', [ProfileCommentsController::class, 'store']);
+        Route::get('{comment_id}', [ProfileCommentsController::class, 'show'])->middleware(['user.has.access']);
+        Route::get('{comment_id}/edit', [ProfileCommentsController::class, 'edit'])->middleware(['user.has.access']);
+        Route::post('{comment_id}', [ProfileCommentsController::class, 'update'])->middleware(['user.has.access']);
+        Route::delete('{comment_id}', [ProfileCommentsController::class, 'destroy'])->middleware(['user.has.access']);
+    });
 });
 
-Route::get('/welcome', function () {
-    return view('welcome');
+//
+// Post
+//
+
+Route::group(['prefix' => '{id}-{slug}', 'middleware' => ['auth']], function () {
+    Route::get('/', [PostController::class, 'index']);
+    Route::post('/', [PostController::class, 'store']);
+    Route::get('edit', [PostController::class, 'edit']);
+    Route::post('/', [PostController::class, 'update']);
+    Route::delete('/', [PostController::class, 'destroy']);
+
+    //Comments
+    Route::group(['prefix' => 'comments'], function () {
+        Route::get('/', [PostCommentsController::class, 'index']);
+        Route::get('create', [PostCommentsController::class, 'create']);
+        Route::post('/', [PostCommentsController::class, 'store']);
+        Route::get('{comment_id}', [PostCommentsController::class, 'show']);
+        Route::get('{comment_id}/edit', [PostCommentsController::class, 'edit']);
+        Route::post('{comment_id}', [PostCommentsController::class, 'update']);
+        Route::delete('{comment_id}', [PostCommentsController::class, 'destroy']);
+    });
 });
 
-//Опубликованые статьи пользователя
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-//Черновые статьи пользователя
-Route::get('/dashboard/draft', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard/draft');
-
-//На проверке у админа
-Route::get('/dashboard/check', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard/check');
-
-//Страница автора со статьями
-Route::get('/profile/{user_id}', [UserController::class, 'index']);
-
-//Редактирование профиля
-Route::get('/profile/{user_id}/edit', [UserController::class, 'edit'])->middleware(['user.has.access']);
-Route::get('/{post_id}-{slug}', [PostController::class, 'index']);
-
-//Редактор статей
-Route::get('/editor', [EditorController::class, 'index'])->middleware(['auth'])->name('editor');
-Route::get('/editor/{post_id}', [EditorController::class, 'index'])->middleware(['auth']);
+Route::get('writing', [PostController::class, 'create'])->name('writing');
 
 //Админка
-Route::get('/admin', [AdminController::class, 'index'])->middleware(['admin'])->name('admin');
-Route::get('/admin/posts', [AdminController::class, 'posts'])->middleware(['admin']);
-Route::get('/admin/users', [AdminController::class, 'users'])->middleware(['admin']);
-Route::get('/admin/users/{id}', [AdminController::class, 'edit_user'])->middleware(['admin']);
-Route::get('/admin/users/create', [AdminController::class, 'create_user'])->middleware(['admin']);
-Route::get('/admin/comments', [AdminController::class, 'comments'])->middleware(['admin']);
-Route::get('/admin/comments/{id}', [AdminController::class, 'edit_comment'])->middleware(['admin']);
+Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+    Route::get('/', [AdminController::class, 'index']);
 
-Route::post('/admin/users/{id}', [AdminController::class, 'save_user'])->middleware(['admin']);
-Route::post('/admin/users/create', [AdminController::class, 'save_user'])->middleware(['admin']);
-Route::post('/admin/comments/{id}', [AdminController::class, 'save_comment'])->middleware(['admin']);
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/', [AdminUsersController::class, 'index']);
+        Route::get('create', [AdminUsersController::class, 'create']);
+        Route::post('/', [AdminUsersController::class, 'store']);
+        Route::get('{id}', [AdminUsersController::class, 'show']);
+        Route::get('{id}/edit', [AdminUsersController::class, 'edit']);
+        Route::post('{id}', [AdminUsersController::class, 'update']);
+        Route::delete('{id}', [AdminUsersController::class, 'destroy']);
 
-//
-// POST
-//
-Route::post('/editor', [EditorController::class, 'save'])->middleware(['auth']);
-Route::post('/editor/{post_id}', [EditorController::class, 'save'])->middleware(['auth']);
-Route::post('/profile/{user_id}/edit', [UserController::class, 'update'])->middleware(['user.has.access']);
+        Route::group(['prefix' => 'roles'], function () {
+            Route::get('/', [AdminRolesController::class, 'index']);
+            Route::get('create', [AdminRolesController::class, 'create']);
+            Route::post('/', [AdminRolesController::class, 'store']);
+            Route::get('{id}', [AdminRolesController::class, 'show']);
+            Route::get('{id}/edit', [AdminRolesController::class, 'edit']);
+            Route::post('{id}', [AdminRolesController::class, 'update']);
+            Route::delete('{id}', [AdminRolesController::class, 'destroy']);
+        });
+    });
 
-//AJAX пагинация
-Route::post('/page/{num}', [AjaxController::class, 'query']);
+
+    Route::group(['prefix' => 'comments'], function () {
+        Route::get('/', [AdminCommentsController::class, 'index']);
+        Route::get('create', [AdminCommentsController::class, 'create']);
+        Route::post('/', [AdminCommentsController::class, 'store']);
+        Route::get('{id}', [AdminCommentsController::class, 'show']);
+        Route::get('{id}/edit', [AdminCommentsController::class, 'edit']);
+        Route::post('{id}', [AdminCommentsController::class, 'update']);
+        Route::delete('{id}', [AdminCommentsController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => 'posts'], function () {
+        Route::get('/', [AdminPostsController::class, 'index']);
+        Route::get('create', [AdminPostsController::class, 'create']);
+        Route::post('/', [AdminPostsController::class, 'store']);
+        Route::get('{id}', [AdminPostsController::class, 'show']);
+        Route::get('{id}/edit', [AdminPostsController::class, 'edit']);
+        Route::post('{id}', [AdminPostsController::class, 'update']);
+        Route::delete('{id}', [AdminPostsController::class, 'destroy']);
+    });
+
+});
 
 //AJAX переход
-Route::post('/ajax', [AjaxController::class, 'ajax_page']);
+Route::post('/ajax', [AjaxController::class, 'index']);
 
 require __DIR__.'/auth.php';

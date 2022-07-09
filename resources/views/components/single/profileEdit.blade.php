@@ -20,7 +20,7 @@ $User = User::findOrFail($user_id);
                     <h1 class="p-6 bg-white border-b border-gray-200 text-xl font-semibold">
                        Settings
                     </h1>
-                    <form class="ui-form p-6" id="profile_edit" action="{{url('/profile/'.$user_id.'/edit')}}" method="post">
+                    <form class="ui-form p-6" id="profile_edit" action="{{url('/profile/'.$user_id)}}" method="update">
                         @csrf
                         <div class="ui_form__fieldsets grid">
                             <div class="ui_form__fieldset" data-error="Invalid Name">
