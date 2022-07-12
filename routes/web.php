@@ -36,14 +36,14 @@ Route::get('/', [IndexController::class, 'index']);
 //
 
 Route::group(['prefix' => 'profile', 'middleware' => ['auth']], function () {
-    Route::get('/', [ProfileController::class, 'index'])->name('ProfileIndex');
+    Route::get('/', [ProfileController::class, 'index'])->name('AllPosts');
     Route::post('/', [ProfileController::class, 'store']);
-    Route::get('{id}', [ProfileController::class, 'show']);
-    Route::get('{id}/edit', [ProfileController::class, 'edit'])->middleware(['user.has.access']);
-    Route::post('{id}', [ProfileController::class, 'update'])->middleware(['user.has.access']);
+    Route::get('{id}', [ProfileController::class, 'show'])->where(['id' => '[0-9]+'])->name('AllPostsUser');
+    Route::get('{id}/edit', [ProfileController::class, 'edit'])->where(['id' => '[0-9]+'])->middleware(['user.has.access']);
+    Route::post('{id}', [ProfileController::class, 'update'])->where(['id' => '[0-9]+'])->middleware(['user.has.access']);
 
     //User's Posts
-    Route::get('draft', [ProfileController::class, 'draft']);
+    Route::get('draft', [ProfileController::class, 'draft'])->name('draft');
 
     //Comments Browser
     Route::group(['prefix' => 'comments'], function () {
@@ -63,10 +63,9 @@ Route::group(['prefix' => 'profile', 'middleware' => ['auth']], function () {
 
 Route::group(['prefix' => '{id}-{slug}', 'middleware' => ['auth']], function () {
     Route::get('/', [PostController::class, 'index']);
-    Route::post('/', [PostController::class, 'store']);
     Route::get('edit', [PostController::class, 'edit']);
-    Route::post('/', [PostController::class, 'update']);
-    Route::delete('/', [PostController::class, 'destroy']);
+    Route::post('edit', [PostController::class, 'update']);
+    Route::delete('edit', [PostController::class, 'destroy']);
 
     //Comments
     Route::group(['prefix' => 'comments'], function () {
@@ -81,6 +80,7 @@ Route::group(['prefix' => '{id}-{slug}', 'middleware' => ['auth']], function () 
 });
 
 Route::get('writing', [PostController::class, 'create'])->name('writing');
+Route::post('writing', [PostController::class, 'store']);
 
 //Админка
 Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {

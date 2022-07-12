@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Post\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use function view;
 
 
@@ -14,7 +15,7 @@ class PostController extends Controller
 
     public function index($id)
     {
-        $Post = Post::getPost($id);
+        $Post = Post::get($id);
         if($Post) {
             return view('post', [
                 'post' => $Post
@@ -23,6 +24,7 @@ class PostController extends Controller
             return view('components.error.404');
         }
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -40,11 +42,40 @@ class PostController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        $_POST['data'] = str_replace('\\', '', $_POST['data']);
+        $data = json_decode($_POST['data'], true);
+        $title = $data['blocks'][0]['data']['text'];
+        $excerpt = $data['blocks'][1]['data']['text'];
+        $slug = Post::slugify($title);
+
+        $id = DB::table('posts')
+            ->insertGetId(
+                ['author_id' => Auth::user()->id,
+                    'status' => 'draft',
+                    'created_at' =>  \Carbon\Carbon::now(),
+                    'title' => $title,
+                    'excerpt' => $excerpt,
+                    'slug'=> $slug],
+            );
+        DB::table('post_metas')
+            ->updateOrInsert(
+                ['meta_key' => 'post_content', 'post_id' => $id],
+                ['meta_value' => json_encode($data, JSON_UNESCAPED_UNICODE)]
+            );
+        if(isset($_POST['status']) AND Auth::user()->role == 'admin'){
+            DB::table('posts')
+                ->where('post_id', $id)
+                ->update(['status' => strval($_POST['status'])]);
+        } else {
+            DB::table('posts')
+                ->where('post_id', $id)
+                ->update(['status' => 'draft']);
+        }
+
+        return $id;
     }
 
     /**
@@ -67,7 +98,7 @@ class PostController extends Controller
     {
         $editor = ['blocks' => [ ['id' => 'first', 'type' => 'header', 'data' => ['text' => 'New draft', 'level' => 1]], ['id' => 'first1', 'type' => 'paragraph', 'data' => ['text' => 'Insert some text...']]]];
         if($id) {
-            $Post = Post::getPost($id);
+            $Post = Post::get($id);
             //Проверяем существует ли запись и есть ли право на редактирование
             if($Post AND $Post->canEdit()) {
                 $editor = $Post->content;
@@ -94,26 +125,34 @@ class PostController extends Controller
     {
         $_POST['data'] = str_replace('\\', '', $_POST['data']);
         $data = json_decode($_POST['data'], true);
-        if(!$id) {
-            $id = Post::create();
-        }
-        $Post = Post::getPost($id);
+
+        $Post = Post::get($id);
         //Проверяем существует ли запись и есть ли право на редактирование
         if($Post AND $Post->canEdit()) {
             $title = $data['blocks'][0]['data']['text'];
             $excerpt = $data['blocks'][1]['data']['text'];
-            $Post->update_post('title', $title);
-            $Post->update_post('excerpt', $excerpt);
-            $Post->update_post('slug', strtolower(str_replace(' ', '-', $title)));
-            $Post->update_meta('post_content', json_encode($data, JSON_UNESCAPED_UNICODE));
+
+            DB::table('posts')
+                ->where('post_id', $id)
+                ->update(['title' => $title, 'excerpt' => $excerpt]);
+
+            DB::table('post_metas')
+                ->updateOrInsert(
+                    ['meta_key' => 'post_content', 'post_id' => $id],
+                    ['meta_value' => json_encode($data, JSON_UNESCAPED_UNICODE)]
+                );
             if(isset($_POST['status']) AND Auth::user()->role == 'admin'){
-                $Post->update_post('status', strval($_POST['status']));
+                DB::table('posts')
+                    ->where('post_id', $id)
+                    ->update(['status' => strval($_POST['status'])]);
             } else {
-                $Post->update_post('status', 'draft');
+                DB::table('posts')
+                    ->where('post_id', $id)
+                    ->update(['status' => 'draft']);
             }
         }
 
-        return $_POST['data'];
+        return $id;
     }
 
     /**

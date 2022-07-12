@@ -28,87 +28,48 @@ class Post extends Model
     // Получаем запись с контентом по его ID
     //
 
-    public static function getPost($post_id)
+    public static function get($id)
     {
         $post_data = false;
-        $query = Post::find($post_id);
+        $query = Post::find($id);
+        $get_content = '';
         if($query){
-            $post_data = $query;
+            $Post = $query;
 
             // Если статья принадлежит юзеру или юзер админ – возвращаем статью
-            if($post_data->status != 'publish' AND !Auth::id()) {
+            if($Post->status != 'publish' AND !Auth::id()) {
                 return false;
             }
-            if ($post_data->status != 'publish' AND (Auth::id() != $post_data->author_id OR Auth::user()->role != 'admin')) {
+            if ($Post->status != 'publish' AND (Auth::id() != $Post->author_id OR Auth::user()->role != 'admin')) {
                 return false;
             }
 
-            $get_content = (new Post)->get_meta(['post_id' => $post_id, 'meta_key' => 'post_content']);
-            $post_content = json_decode($get_content, true);
-            if(!is_array($post_content)){
-                $post_content = $get_content;
+            $query_post_content = PostMeta::select('*')
+                ->where('post_id', '=', $id)
+                ->where('meta_key', '=', 'post_content')
+                ->paginate(1)->first();
+
+            if($query_post_content){
+                $get_content = $query_post_content->meta_value;
             }
-            $post_data->content = $post_content;
+
+            $content = json_decode($get_content, true);
+
+            if(!is_array($content)){
+                $content = $get_content;
+            }
+            $Post->content = $content;
         }
 
-        return $post_data;
+        return $Post;
     }
 
-    //
-    // Получаем значение метаполя по ID поста и ключу
-    //
-    public function get_meta($args = []): string
-    {
-        if(!isset($args['post_id'])){
-            $args['post_id'] = $this->post_id;
-        }
-        $query = PostMeta::select('post_metas.*')
-            ->where('post_id', '=', $args['post_id'])
-            ->where('meta_key', '=', $args['meta_key'])
-            ->paginate(1)->first();
-        $result = '';
-        if($query){
-            $result = $query->meta_value;
-        }
 
-        return $result;
-    }
-
-    public function meta($key, $post_id = false): string
-    {
-        if(!$post_id){
-            $post_id = $this->post_id;
-        }
-        $query = PostMeta::select('post_metas.*')
-            ->where('post_id', '=', $post_id)
-            ->where('meta_key', '=', $key)
-            ->paginate(1)->first();
-        $result = '';
-        if($query){
-            $result = $query->meta_value;
-        }
-
-        return $result;
-    }
-
-    public function update_meta($key, $value){
-        DB::table('post_metas')
-            ->updateOrInsert(
-                ['meta_key' => $key, 'post_id' => $this->post_id],
-                ['meta_value' => $value]
-            );
-    }
-
-    public function update_post($key, $value){
-        DB::table('posts')
-            ->where('post_id', $this->post_id)
-            ->update([$key => $value]);
-    }
 
     //
     // Запрос на получение записей по параметрам
     //
-    public static function get($args = []) {
+    public static function query($args = []) {
         $status = 'publish';
         $posts_per_page = 15;
 
@@ -130,14 +91,6 @@ class Post extends Model
     }
 
 
-    public static function create(): int
-    {
-        return DB::table('posts')
-            ->insertGetId(
-                ['author_id' => Auth::user()->id, 'status' => 'draft', 'created_at' =>  \Carbon\Carbon::now()],
-            );
-    }
-
     public function canEdit(): bool
     {
         if(Auth::id()) {
@@ -151,7 +104,7 @@ class Post extends Model
         }
     }
 
-    public function renderContent(){
+    public function content(){
         $render = '';
         if(!is_array($this->content)){
             return $this->content;
@@ -161,5 +114,32 @@ class Post extends Model
         }
 
         echo $render;
+    }
+
+    public static function slugify($text, string $divider = '-')
+    {
+        // replace non letter or digits by divider
+        $text = preg_replace('~[^\pL\d]+~u', $divider, $text);
+
+        // transliterate
+        $text = iconv('utf-8', 'us-ascii//TRANSLIT', $text);
+
+        // remove unwanted characters
+        $text = preg_replace('~[^-\w]+~', '', $text);
+
+        // trim
+        $text = trim($text, $divider);
+
+        // remove duplicate divider
+        $text = preg_replace('~-+~', $divider, $text);
+
+        // lowercase
+        $text = strtolower($text);
+
+        if (empty($text)) {
+            return 'n-a';
+        }
+
+        return $text;
     }
 }

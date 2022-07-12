@@ -30,7 +30,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('ProfileIndex')">
+                        <x-dropdown-link :href="route('AllPosts')">
                             {{ __('Profile') }}
                         </x-dropdown-link>
                         <x-dropdown-link :href="url('profile/'.Auth::id().'/edit')">
@@ -80,10 +80,10 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('ProfileIndex')" :active="request()->routeIs('ProfileIndex')">
+            <x-responsive-nav-link :href="route('AllPosts')" :active="request()->routeIs('AllPosts')">
                 {{ __('Profile') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="url('profile/'.Auth::id().'/edit')" :active="request()->routeIs('ProfileIndex')">
+            <x-responsive-nav-link :href="url('profile/'.Auth::id().'/edit')" :active="request()->routeIs('AllPosts')">
                 {{ __('Settings') }}
             </x-responsive-nav-link>
         </div>

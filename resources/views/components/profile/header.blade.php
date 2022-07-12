@@ -26,20 +26,20 @@ $get_path = Request::route()->getName();
                 </div>
             </div>
             <div class="hidden ml-2 pl-3 pr-4 pt-2 sm:flex sm:items-center sm:ml-2">
-                @if(request()->is('dashboard'))
-                <x-nav-link href="{{url('profile/'.$user_id)}}" :active="request()->is('dashboard')" class="px-2 p-5">
+                @if(request()->routeIs('AllPostsUser'))
+                <x-nav-link href="{{url('profile/'.$user_id)}}" :active="request()->routeIs('AllPostsUser')" class="px-2 p-5">
                     {{ __('All Posts') }}
 
                 </x-nav-link>
                 @else
-                    <x-nav-link href="{{url('profile/'.$user_id)}}" :active="request()->is('profile/'.$user_id)" class="px-2 p-5">
+                    <x-nav-link href="{{route('AllPosts')}}" :active="request()->routeIs('AllPosts')" class="px-2 p-5">
                         {{ __('All Posts') }}
 
                     </x-nav-link>
                 @endif
                 @if(Auth::user())
                     @if(Auth::user()->id == $user_id)
-                        <x-nav-link :href="route('dashboard/draft')" :active="request()->routeIs('dashboard/draft')" class="px-2 p-5">
+                        <x-nav-link :href="route('draft')" :active="request()->routeIs('draft')" class="px-2 p-5">
                             {{ __('Draft') }}
                         </x-nav-link>
                     @endif

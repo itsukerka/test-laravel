@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post\Post;
 use App\Models\User\User;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,11 @@ class ProfileController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
+    {
+        return view('dashboard');
+    }
+
+    public function draft()
     {
         return view('dashboard');
     }

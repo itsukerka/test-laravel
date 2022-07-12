@@ -10,10 +10,10 @@ if(isset($user_id)){
 }
 $routeName = Request::route()->getName();
 $args = ['post_author' => $data['user_id']];
-if($routeName == 'dashboard/draft'){
+if($routeName == 'draft'){
     $args['status'] = 'draft';
 }
-$data['posts'] = Post::get($args);
+$data['posts'] = Post::query($args);
 
 ?>
 <main class="ui-main-layout">

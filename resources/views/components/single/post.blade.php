@@ -49,7 +49,7 @@ if($post->canEdit()){
                     </div>
                 </div>
                 <div class="content px-6 pb-3">
-                    {{ $post->renderContent() }}
+                    {{ $post->content() }}
                 </div>
 
                 <div class="layout--a">
