@@ -3,18 +3,31 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post\Post;
 use Illuminate\Http\Request;
 
 class AdminPostsController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $posts = Post::all();
+        return view('admin.posts', compact($posts));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function query()
+    {
+        $args = [];
+        if(isset($_GET['query'])){
+            $args = $this->prepare_query($_POST['query']);
+        }
+        $posts = Post::query($args);
+        return view('admin.posts', compact($posts));
     }
 
     /**
@@ -81,5 +94,10 @@ class AdminPostsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function prepare_query($string){
+        $string = str_replace('\\', '', $string);
+        return json_decode($string, true);
     }
 }

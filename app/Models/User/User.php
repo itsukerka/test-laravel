@@ -98,4 +98,18 @@ class User extends Authenticatable
             echo '<img src=".$image_url.">';
         }
     }
+
+    //
+    // Запрос на получение записей по параметрам
+    //
+    public static function query($args = []) {
+
+        return User::when(isset($args['email']), function ($query) use ($args) {
+                $query->where('email', $args['email']);
+            })
+            ->when(isset($args['id']), function ($query) use ($args) {
+                $query->where('id', $args['id']);
+            })
+            ->latest();
+    }
 }

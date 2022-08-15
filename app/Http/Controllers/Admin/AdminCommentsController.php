@@ -3,18 +3,32 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comment\Comment;
+use App\Models\Post\Post;
 use Illuminate\Http\Request;
 
 class AdminCommentsController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $comments = Comment::all();
+        return view('admin.comments', compact($comments));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function query()
+    {
+        $args = [];
+        if(isset($_GET['query'])){
+            $args = $this->prepare_query($_POST['query']);
+        }
+        $comments = Comment::query($args);
+        return view('admin.comments', compact($comments));
     }
 
     /**
@@ -81,5 +95,10 @@ class AdminCommentsController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function prepare_query($string){
+        $string = str_replace('\\', '', $string);
+        return json_decode($string, true);
     }
 }

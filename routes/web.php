@@ -88,6 +88,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
 
     Route::group(['prefix' => 'users'], function () {
         Route::get('/', [AdminUsersController::class, 'index']);
+        Route::post('query', [AdminCommentsController::class, 'query']);
         Route::get('create', [AdminUsersController::class, 'create']);
         Route::post('/', [AdminUsersController::class, 'store']);
         Route::get('{id}', [AdminUsersController::class, 'show']);
@@ -109,21 +110,24 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
 
     Route::group(['prefix' => 'comments'], function () {
         Route::get('/', [AdminCommentsController::class, 'index']);
-        Route::get('create', [AdminCommentsController::class, 'create']);
-        Route::post('/', [AdminCommentsController::class, 'store']);
-        Route::get('{id}', [AdminCommentsController::class, 'show']);
-        Route::get('{id}/edit', [AdminCommentsController::class, 'edit']);
+        Route::post('query', [AdminCommentsController::class, 'query']);
+        // Эти запросы можно делать из под роута [64 строка]?
+        // Route::get('create', [AdminCommentsController::class, 'create']);
+        // Route::get('{id}', [AdminCommentsController::class, 'show']);
+        // Route::get('{id}/edit', [AdminCommentsController::class, 'edit']);
         Route::post('{id}', [AdminCommentsController::class, 'update']);
         Route::delete('{id}', [AdminCommentsController::class, 'destroy']);
     });
 
     Route::group(['prefix' => 'posts'], function () {
         Route::get('/', [AdminPostsController::class, 'index']);
-        Route::get('create', [AdminPostsController::class, 'create']);
-        Route::post('/', [AdminPostsController::class, 'store']);
-        Route::get('{id}', [AdminPostsController::class, 'show']);
-        Route::get('{id}/edit', [AdminPostsController::class, 'edit']);
-        Route::post('{id}', [AdminPostsController::class, 'update']);
+        Route::post('query', [AdminCommentsController::class, 'query']);
+        // Эти запросы можно делать из под роута [64 строка]?
+        // Route::get('create', [AdminPostsController::class, 'create']);
+        // Route::post('/', [AdminPostsController::class, 'store']);
+        // Route::get('{id}', [AdminPostsController::class, 'show']);
+        // Route::get('{id}/edit', [AdminPostsController::class, 'edit']);
+        // Route::post('{id}', [AdminPostsController::class, 'update']);
         Route::delete('{id}', [AdminPostsController::class, 'destroy']);
     });
 

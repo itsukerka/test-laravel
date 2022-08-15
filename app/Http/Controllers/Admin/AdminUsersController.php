@@ -3,20 +3,33 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comment\Comment;
+use App\Models\User\User;
 use Illuminate\Http\Request;
 
 class AdminUsersController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        $users = User::all();
+        return view('admin.users', compact($users));
     }
 
+    /**
+     * Display a listing of the resource.
+     */
+    public function query()
+    {
+        $args = [];
+        if(isset($_GET['query'])){
+            $args = $this->prepare_query($_POST['query']);
+        }
+        $users = User::query($args);
+        return view('admin.users', compact($users));
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -81,5 +94,10 @@ class AdminUsersController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public static function prepare_query($string){
+        $string = str_replace('\\', '', $string);
+        return json_decode($string, true);
     }
 }
